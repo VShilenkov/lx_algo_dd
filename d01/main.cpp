@@ -8,19 +8,27 @@ using std::string;
 
 typedef size_t (*serch_function_t)(int[], int, size_t);
 
+size_t test_count 			= 0;
+size_t test_fault_count 	= 0;
+size_t test_success_count 	= 0;
+
 void test(string test_name, size_t expected_value, serch_function_t funct, int serch_array[], int serch_key, size_t array_size)
 {
 	assert(funct != NULL);
+	
+	test_count++;
 	
 	size_t actual_value = funct(serch_array, serch_key, array_size);
 	
 	if (actual_value != expected_value)
 	{
 		cout << "Test " + test_name + " FAILED" << endl;
+		test_fault_count++;
 	}
 	else
 	{
 		cout << "Test " + test_name + " OK" << endl;
+		test_success_count++;
 	}
 }
 
@@ -124,25 +132,25 @@ size_t b_search_iterative	(int A[], int key, size_t size)
 
 int main()
 {
-	bool test_assert_empty = false;
+	bool test_assert_empty    = false;
+	bool test_assert_unsorted = false;
+	
+	bool test_single_element_positive 			= true;
+	bool test_single_element_negative 			= true;
+	bool test_pair_elements_left_positive 		= true;
+	bool test_pair_elements_right_positive 		= true;
+	bool test_pair_elements_negative 			= true;
+	bool test_multiple_elements_positive 		= true;
+	bool test_multiple_elements_first_positive 	= true;
+	bool test_multiple_elements_last_positive 	= true;
+	bool test_multiple_elements_negative 		= true;
 	
 	int key = 7;
-	
-	int empty[1]	 						= {};
-	int multiple_elements_unsorted[8]		= {1, 8, 5, 11, 13, 17, 23};
-	 
-	int single_element_positive[2] 			= {7};
-	int single_element_negative[2]			= {1};
-	int pair_elements_left_positive[3] 		= {7, 8};
-	int pair_elements_right_positive[3] 	= {1, 7};
-	int pair_elements_negative[3] 			= {1, 2};
-	int multiple_elements_positive[8]		= {1, 7, 9, 11, 13, 17, 23};
-	int multiple_elements_first_positive[8] = {7, 9, 11, 13, 17, 23, 27};
-	int multiple_elements_last_positive[8]	= {1, 2, 3, 4, 5, 6, 7};
-	int multiple_elements_negative[8] 		= {1, 8, 9, 11, 13, 17, 23};
-	
+		
 	if ( test_assert_empty )
 	{
+		int empty[1]	 						= {};
+		
 		test("empty l_search_naive_for"		, 1, l_search_naive_for		, empty, key, 0);
 		test("empty l_search_naive_while"	, 1, l_search_naive_while	, empty, key, 0);
 		test("empty l_search_border_in"		, 1, l_search_border_in		, empty, key, 0);
@@ -150,7 +158,153 @@ int main()
 		test("empty b_search_iterative"		, 1, b_search_iterative		, empty, key, 0);
 	}
 	
+	if ( test_assert_unsorted )
+	{
+		int multiple_elements_unsorted[8]		= {1, 8, 5, 11, 13, 17, 23};
+		
+		test ("unsorted b_search_iterative", 1, b_search_iterative, multiple_elements_unsorted, key, 7);
+	}
 	
+	if ( test_single_element_positive )
+	{
+		int single_element_positive[2] 			= {7};
+		
+		size_t length = 1;
+		size_t expect = 0;
+		
+		cout << "---------- TEST single_element_positive" << endl;
+		test("single_element_positive l_search_naive_for"	, expect, l_search_naive_for	, single_element_positive, key, length);
+		test("single_element_positive l_search_naive_while"	, expect, l_search_naive_while	, single_element_positive, key, length);
+		test("single_element_positive l_search_border_in"	, expect, l_search_border_in	, single_element_positive, key, length);
+		test("single_element_positive l_search_border_out"	, expect, l_search_border_out	, single_element_positive, key, length);
+		test("single_element_positive b_search_iterative"	, expect, b_search_iterative	, single_element_positive, key, length);
+	}
+	
+	if ( test_single_element_negative )
+	{
+		int single_element_negative[2]			= {1};
+		
+		size_t length = 1;
+		size_t expect = length;
+		
+		cout << "---------- TEST single_element_negative" << endl;
+		test("single_element_negative l_search_naive_for"	, expect, l_search_naive_for	, single_element_negative, key, length);
+		test("single_element_negative l_search_naive_while"	, expect, l_search_naive_while	, single_element_negative, key, length);
+		test("single_element_negative l_search_border_in"	, expect, l_search_border_in	, single_element_negative, key, length);
+		test("single_element_negative l_search_border_out"	, expect, l_search_border_out	, single_element_negative, key, length);
+		test("single_element_negative b_search_iterative"	, expect, b_search_iterative	, single_element_negative, key, length);
+	}
+	
+	if ( test_pair_elements_left_positive )
+	{
+		int pair_elements_left_positive[3] 		= {7, 8};
+		
+		size_t length = 2;
+		size_t expect = 0;
+		
+		cout << "---------- TEST pair_elements_left_positive" << endl;
+		test("pair_elements_left_positive l_search_naive_for"	, expect, l_search_naive_for	, pair_elements_left_positive, key, length);
+		test("pair_elements_left_positive l_search_naive_while"	, expect, l_search_naive_while	, pair_elements_left_positive, key, length);
+		test("pair_elements_left_positive l_search_border_in"	, expect, l_search_border_in	, pair_elements_left_positive, key, length);
+		test("pair_elements_left_positive l_search_border_out"	, expect, l_search_border_out	, pair_elements_left_positive, key, length);
+		test("pair_elements_left_positive b_search_iterative"	, expect, b_search_iterative	, pair_elements_left_positive, key, length);
+	}
+	
+	if ( test_pair_elements_right_positive )
+	{
+		int pair_elements_right_positive[3] 	= {1, 7};
+		
+		size_t length = 2;
+		size_t expect = 1;
+		
+		cout << "---------- TEST pair_elements_right_positive" << endl;
+		test("pair_elements_right_positive l_search_naive_for"		, expect, l_search_naive_for	, pair_elements_right_positive, key, length);
+		test("pair_elements_right_positive l_search_naive_while"	, expect, l_search_naive_while	, pair_elements_right_positive, key, length);
+		test("pair_elements_right_positive l_search_border_in"		, expect, l_search_border_in	, pair_elements_right_positive, key, length);
+		test("pair_elements_right_positive l_search_border_out"		, expect, l_search_border_out	, pair_elements_right_positive, key, length);
+		test("pair_elements_right_positive b_search_iterative"		, expect, b_search_iterative	, pair_elements_right_positive, key, length);
+		
+	}
+	
+	if ( test_pair_elements_negative )
+	{
+		int pair_elements_negative[3] 			= {1, 2};
+		
+		size_t length = 2;
+		size_t expect = length;
+		
+		cout << "---------- TEST pair_elements_negative" << endl;
+		test("pair_elements_negative l_search_naive_for"	, expect, l_search_naive_for	, pair_elements_negative, key, length);
+		test("pair_elements_negative l_search_naive_while"	, expect, l_search_naive_while	, pair_elements_negative, key, length);
+		test("pair_elements_negative l_search_border_in"	, expect, l_search_border_in	, pair_elements_negative, key, length);
+		test("pair_elements_negative l_search_border_out"	, expect, l_search_border_out	, pair_elements_negative, key, length);
+		test("pair_elements_negative b_search_iterative"	, expect, b_search_iterative	, pair_elements_negative, key, length);
+	}
+	
+	if ( test_multiple_elements_positive )
+	{
+		int multiple_elements_positive[8]		= {1, 7, 9, 11, 13, 17, 23};
+		
+		size_t length = 7;
+		size_t expect = 1;
+		
+		cout << "---------- TEST multiple_elements_positive" << endl;
+		test("multiple_elements_positive l_search_naive_for"	, expect, l_search_naive_for	, multiple_elements_positive, key, length);
+		test("multiple_elements_positive l_search_naive_while"	, expect, l_search_naive_while	, multiple_elements_positive, key, length);
+		test("multiple_elements_positive l_search_border_in"	, expect, l_search_border_in	, multiple_elements_positive, key, length);
+		test("multiple_elements_positive l_search_border_out"	, expect, l_search_border_out	, multiple_elements_positive, key, length);
+		test("multiple_elements_positive b_search_iterative"	, expect, b_search_iterative	, multiple_elements_positive, key, length);	
+	}
+	
+	if ( test_multiple_elements_first_positive )
+	{
+		int multiple_elements_first_positive[8] = {7, 9, 11, 13, 17, 23, 27};
+		
+		size_t length = 7;
+		size_t expect = 0;
+		
+		cout << "---------- TEST multiple_elements_first_positive" << endl;
+		test("multiple_elements_first_positive l_search_naive_for"		, expect, l_search_naive_for	, multiple_elements_first_positive, key, length);
+		test("multiple_elements_first_positive l_search_naive_while"	, expect, l_search_naive_while	, multiple_elements_first_positive, key, length);
+		test("multiple_elements_first_positive l_search_border_in"		, expect, l_search_border_in	, multiple_elements_first_positive, key, length);
+		test("multiple_elements_first_positive l_search_border_out"		, expect, l_search_border_out	, multiple_elements_first_positive, key, length);
+		test("multiple_elements_first_positive b_search_iterative"		, expect, b_search_iterative	, multiple_elements_first_positive, key, length);
+	}
+	
+	if ( test_multiple_elements_last_positive )
+	{
+		int multiple_elements_last_positive[8]	= {1, 2, 3, 4, 5, 6, 7};
+		
+		size_t length = 7;
+		size_t expect = 6;
+		
+		cout << "---------- TEST multiple_elements_last_positive" << endl;
+		test("multiple_elements_last_positive l_search_naive_for"		, expect, l_search_naive_for	, multiple_elements_last_positive, key, length);
+		test("multiple_elements_last_positive l_search_naive_while"		, expect, l_search_naive_while	, multiple_elements_last_positive, key, length);
+		test("multiple_elements_last_positive l_search_border_in"		, expect, l_search_border_in	, multiple_elements_last_positive, key, length);
+		test("multiple_elements_last_positive l_search_border_out"		, expect, l_search_border_out	, multiple_elements_last_positive, key, length);
+		test("multiple_elements_last_positive b_search_iterative"		, expect, b_search_iterative	, multiple_elements_last_positive, key, length);
+	}
+	
+	if ( test_multiple_elements_negative )
+	{
+		int multiple_elements_negative[8] 		= {1, 8, 9, 11, 13, 17, 23};
+		
+		size_t length = 7;
+		size_t expect = length;
+		
+		cout << "---------- TEST multiple_elements_negative" << endl;
+		test("multiple_elements_negative l_search_naive_for"		, expect, l_search_naive_for	, multiple_elements_negative, key, length);
+		test("multiple_elements_negative l_search_naive_while"		, expect, l_search_naive_while	, multiple_elements_negative, key, length);
+		test("multiple_elements_negative l_search_border_in"		, expect, l_search_border_in	, multiple_elements_negative, key, length);
+		test("multiple_elements_negative l_search_border_out"		, expect, l_search_border_out	, multiple_elements_negative, key, length);
+		test("multiple_elements_negative b_search_iterative"		, expect, b_search_iterative	, multiple_elements_negative, key, length);
+	}
+	
+	cout << "---------- TEST SUMMARY" << endl;
+	cout << "Total test number: " 	<< test_count 			<< endl;
+	cout << "Fault test number: " 	<< test_fault_count 	<< " (" << test_fault_count * 100 / test_count 	 << "%)" << endl;
+	cout << "Success test number: " << test_success_count 	<< " (" << test_success_count * 100 / test_count << "%)" << endl;
 	
 	return 0;	
 }
