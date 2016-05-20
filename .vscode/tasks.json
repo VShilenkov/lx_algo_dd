@@ -51,8 +51,8 @@
                     "${fileBasename}.exe", 
                     "-test_run"
                 ],
-                "suppressTaskName": true,
-                "isTestCommand": true
+                "isTestCommand": true,
+                "suppressTaskName": true
             },
             {
                 "taskName": "Build Python",
