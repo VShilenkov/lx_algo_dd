@@ -130,7 +130,8 @@ size_t b_search_iterative	(int A[], int key, size_t size)
 	return size;
 }
 
-int main()
+
+void run_test()
 {
 	bool test_assert_empty    = false;
 	bool test_assert_unsorted = false;
@@ -305,6 +306,16 @@ int main()
 	cout << "Total test number: " 	<< test_count 			<< endl;
 	cout << "Fault test number: " 	<< test_fault_count 	<< " (" << test_fault_count * 100 / test_count 	 << "%)" << endl;
 	cout << "Success test number: " << test_success_count 	<< " (" << test_success_count * 100 / test_count << "%)" << endl;
+}
+
+int main(int argc, char** argv )
+{
+	string test_flag = "-test_run";
+	if ((argc > 1) && (argv[1] == test_flag))
+	{
+		run_test();
+	} 
 	
+		
 	return 0;	
 }

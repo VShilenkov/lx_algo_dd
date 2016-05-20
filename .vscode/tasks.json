@@ -12,7 +12,7 @@
         "showOutput": "always",
         "tasks": [
             {
-                "taskName": "Run Build Task",
+                "taskName": "Build CPP",
                 "args": [
                     "g++",
                     "${fileBasename}",
@@ -46,10 +46,19 @@
                 "suppressTaskName": true
             },
             {
-                "taskName": "Run Test Task",
+                "taskName": "Run Test",
                 "args": [
-                    "echo",
-                    "${fileName}"
+                    "${fileBasename}.exe", 
+                    "-test_run"
+                ],
+                "suppressTaskName": true,
+                "isTestCommand": true
+            },
+            {
+                "taskName": "Build Python",
+                "args": [
+                    "python",
+                    "${fileBasename}"
                 ],
                 "suppressTaskName": true
             }
