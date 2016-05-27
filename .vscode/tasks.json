@@ -16,6 +16,7 @@
                 "args": [
                     "g++",
                     "${fileBasename}",
+                    "-std=c++11",
                     "-Wall",
                     "-o",
                     "${fileBasename}.exe"
