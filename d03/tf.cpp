@@ -118,11 +118,8 @@ TIter binary_search_2(TIter begin, TIter end, T key)
     {
         return end;
     }
-    if (size == 1)
-    {
-        return (*begin) == key ? begin : end;
-    }
-    assert (size > 1);
+
+    assert (size > 0);
     
     auto m = begin + (end - begin) / 2;
     
@@ -142,6 +139,40 @@ TIter binary_search_2(TIter begin, TIter end, T key)
     
 }
 
+template <class TIter, class T>
+TIter upper_bound(TIter begin, TIter end, T key)
+{
+    assert(std::is_sorted(begin, end));
+   
+    while (begin < end)
+    {
+        auto m = begin + (end - begin) / 2;
+    
+        // [begin m) [m] (m end)
+    
+        if (key < *m)   // [begin, m)
+        {
+            end = m;
+        }
+        else // [m+1, end)
+        {
+            begin = m+1;
+        }
+    }
+    
+   return begin; 
+    
+}
+
+template <class TIter, class T>
+TIter binary_search_3(TIter begin, TIter end, T key)
+{
+    auto res = upper_bound(begin, end, key);
+    if (res == end) 
+        return end;
+        
+    return *res == key ? res : end;
+}
 
 //--
 
@@ -149,6 +180,7 @@ void test_all_binary_search()
 {
     typedef std::vector<int> Vec;
     test_binary_search(binary_search_1<Vec::iterator, int>);
+    test_binary_search(binary_search_2<Vec::iterator, int>);
 }
 
 int main()
