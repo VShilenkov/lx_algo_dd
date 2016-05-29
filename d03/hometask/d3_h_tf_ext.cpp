@@ -84,8 +84,67 @@ private:
    const argument_type& mKey;
 };
 
+template <typename T>
+class range_verifier
+{
+public:
+   typedef T    argument_type;
+   typedef bool result_type;
+   
+   range_verifier(const argument_type& aLeftBound, const argument_type& aRightBound)
+   : mLeftBound(aLeftBound)
+   , mRightBound(aRightBound)
+   {
+      assert(  (  (mLeftBound < mRightBound) 
+               || (  !(mLeftBound < mRightBound) 
+                  && !(mRightBound < mLeftBound))) 
+            && "range_verifier: wrong range");
+   }
+   
+   result_type operator() (const argument_type& key)
+   {
+      return (    (  (  !(key < mLeftBound) 
+                     && !(mLeftBound < key)) 
+                  || (mLeftBound < key)) 
+               && (key < mRightBound));
+   }
+   
+private:
+   const argument_type& mLeftBound;
+   const argument_type& mRightBound;
+};
 
+template <typename T>
+typename T::const_iterator linear_search(       typename T::const_iterator aBegin
+                                        ,       typename T::const_iterator aEnd
+                                        , const typename T::value_type&    key)
+{
+   while (aBegin != aEnd)
+   {
+      if (*(aBegin++) == key) return (--aBegin);
+   }
+   return aEnd;
+}
 
+template <typename T>
+class one_of_verifier
+{
+public:
+   typedef T    argument_type;
+   typedef bool result_type;
+   
+   explicit one_of_verifier(const vector<argument_type>& aKeys)
+   :mKeys(aKeys)
+   {}
+   
+   result_type operator() (const argument_type& key)
+   {
+      return (linear_search<vector<argument_type>>(mKeys.cbegin(), mKeys.cend(), key) != mKeys.cend());   
+   }
+private:
+   const vector<argument_type>& mKeys;
+};
+//-----------------------------------------------------------------------------
 
 
 int main (int argc, char** argv)
@@ -102,10 +161,31 @@ int main (int argc, char** argv)
    //cout << ( ( isSorted(ivec({3})) ) ? ("sorted") : ("not sorted") ) << endl;
    
    //cout << ivec({}) << endl;
-   exact_verifier<int> a(7);
    
-   cout << (a(2) ? "equal" : "unequal") << endl;
-   cout << (a(7) ? "equal" : "unequal") << endl;
+   //exact_verifier<int> a(7);
+   
+   //cout << (a(2) ? "equal" : "unequal") << endl;
+   //cout << (a(7) ? "equal" : "unequal") << endl;
+   
+   // range_verifier<int> a(5, 4);
+   // cout << (a(5) ? "equal" : "unequal") << endl;
+   // cout << (a(6) ? "equal" : "unequal") << endl;
+   // cout << (a(7) ? "equal" : "unequal") << endl;
+   // cout << (a(8) ? "equal" : "unequal") << endl;
+   
+   // ivec a = {1, 2, 3, 4, 5};
+   // ivec::const_iterator i = linear_search<ivec>(a.cbegin(), a.cend(), 6);
+   // cout << ((i == a.cend()) ? -1 : (i - a.cbegin())) << endl;  
+   
+   // ivec a = {1, 2, 3, 4, 5};
+   // one_of_verifier<int> v(a);
+   // cout << (v(0) ? "equal" : "unequal") << endl;
+   // cout << (v(1) ? "equal" : "unequal") << endl;
+   // cout << (v(2) ? "equal" : "unequal") << endl;
+   // cout << (v(3) ? "equal" : "unequal") << endl;
+   // cout << (v(4) ? "equal" : "unequal") << endl;
+   // cout << (v(5) ? "equal" : "unequal") << endl;
+   // cout << (v(6) ? "equal" : "unequal") << endl;
    
    return 0;
 }
