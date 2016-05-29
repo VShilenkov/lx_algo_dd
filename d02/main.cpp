@@ -66,10 +66,14 @@ size_t b_search_recursive_imp (int A[], int key, size_t left, size_t right)
 
 size_t b_search_recursive	(int A[], int key, size_t size)
 {
-    assert (0 < size);
+	assert (0 < size);
 	assert (isSorted(A, size));
 	
-    return b_search_recursive_imp(A, key, 0, size);
+	size_t result = b_search_recursive_imp(A, key, 0, size); 
+	
+	if ( result == size ) return size;
+	
+   return  ( (A[result] == key) ? (result) : (size) );
 }
 
 void run_test()
