@@ -1,7 +1,10 @@
 //-----------------------------------------------------------------------------
 #include <iostream>
+//#include <iomanip>
+#include <iterator>
 #include <cassert>
 #include <vector>
+#include <algorithm>
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -12,6 +15,7 @@ using namespace std;
 typedef vector<int> ivec;
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 template <typename T>
 bool isSorted(const T* A, size_t aSize)
 {
@@ -41,21 +45,43 @@ bool isSorted(const T& aCont)
    
    return true;
 }
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+ostream& operator<<(ostream& o, const ivec& c)
+{
+   o << "{";
+   //copy(c.begin(), c.end(), ostream_iterator<ivec::value_type>(o, ","));
+   ivec::const_iterator b = c.cbegin();
+   ivec::const_iterator e = c.cend();
+   
+   if (b != e)
+   {
+      o << *(b++);
+      while (b != e) { o << ", " << *(b++); }
+   }
+   
+   o << "}";
+   return o;
+}
+//-----------------------------------------------------------------------------
 
 
 
 int main (int argc, char** argv)
 {
-   int S[] = {0, 1, 2, 3};
-   int U[] = {3, 2, 1, 0};
+   //int S[] = {0, 1, 2, 3};
+   //int U[] = {3, 2, 1, 0};
    
-   cout << ((isSorted(S, 4)) ? ("sorted") : ("not sorted")) << endl;
-   cout << ((isSorted(U, 4)) ? ("sorted") : ("not sorted")) << endl;
+   //cout << ((isSorted(S, 4)) ? ("sorted") : ("not sorted")) << endl;
+   //cout << ((isSorted(U, 4)) ? ("sorted") : ("not sorted")) << endl;
    //cout << ((isSorted(U, 0)) ? ("sorted") : ("not sorted")) << endl;
    
-   cout << ( ( isSorted(ivec({0, 1, 2, 3})) ) ? ("sorted") : ("not sorted") ) << endl;
-   cout << ( ( isSorted(ivec({3, 2, 1, 0})) ) ? ("sorted") : ("not sorted") ) << endl;
-   cout << ( ( isSorted(ivec({3})) ) ? ("sorted") : ("not sorted") ) << endl;
+   //cout << ( ( isSorted(ivec({0, 1, 2, 3})) ) ? ("sorted") : ("not sorted") ) << endl;
+   //cout << ( ( isSorted(ivec({3, 2, 1, 0})) ) ? ("sorted") : ("not sorted") ) << endl;
+   //cout << ( ( isSorted(ivec({3})) ) ? ("sorted") : ("not sorted") ) << endl;
+   
+   //cout << ivec({}) << endl;
    
    return 0;
 }
