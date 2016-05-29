@@ -249,7 +249,32 @@ typename T::const_iterator upper_bound(       typename T::const_iterator aBegin
    }
    
    return aBegin;
-}                                      
+}
+
+template <typename T>
+typename T::const_iterator lower_bound(       typename T::const_iterator aBegin
+                                      ,       typename T::const_iterator aEnd
+                                      , const typename T::value_type&    key)
+{
+   assert ((isSorted<T>(aBegin, aEnd)) && "lower_bound: Container is not sorted");
+   
+   while (aBegin < aEnd)
+   {
+      typename T::const_iterator middle = aBegin + (aEnd - aBegin) / 2;
+      
+      if (*middle < key)   // (middle, end)
+      {
+         aBegin = ++middle;
+      }
+      else                 // [begin, middle)
+      {
+         aEnd = middle;
+      }
+      
+   }
+   
+   return aBegin;
+}
 //-----------------------------------------------------------------------------
 
 
@@ -299,10 +324,59 @@ void test_upper_bound(function_t bound_imp)
 	cout << "Success:\t"   << testCounter-failCounter << "\t(" << (testCounter-failCounter) * 100 / testCounter << "%)" << endl;
 }
 
+template <typename function_t>
+void test_lower_bound(function_t bound_imp)
+{
+   key_type key = 26;
+   size_t testCounter = 0;
+   size_t failCounter = 0;
+   
+   auto imp_adapter = [bound_imp] (ivec& v, const key_type& k) {
+      ivec::const_iterator bound = bound_imp(v.cbegin(), v.cend(), k);
+      return (bound == v.cend()) ? (-1) : (bound - v.cbegin()) ; 
+   };
+   
+   // degenerated
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>(-1), imp_adapter, ivec({}), key);
+   
+   // first trivial
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>(-1), imp_adapter, ivec({key-1}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key  }), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key+1}), key);
+   
+   // second trivial
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>(-1), imp_adapter, ivec({key-1, key-1}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 1), imp_adapter, ivec({key-1, key  }), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key  , key  }), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key  , key+1}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key+1, key+1}), key);
+   
+   // common
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>(-1), imp_adapter, ivec({  2,   6,   8,  10,  21,  23}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 5), imp_adapter, ivec({  2,   6,   8,  10,  21, key}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 4), imp_adapter, ivec({  2,   6,   8,  10, key, key}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 3), imp_adapter, ivec({  2,   6,   8, key, key,  27}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 2), imp_adapter, ivec({  2,   6, key, key,  27,  30}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 1), imp_adapter, ivec({  2, key, key,  27,  30,  37}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key, key,  27,  30,  37,  43}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({key,  27,  30,  37,  43,  59}), key);
+   test(testCounter, failCounter, exact_verifier<ivec::difference_type>( 0), imp_adapter, ivec({ 27,  30,  37,  43,  59,  95}), key);
+   
+   cout << "#---------- TEST SUMMARY" << endl;
+   cout << "\t\t Tests" << endl;
+	cout << "Total:\t" 	  << testCounter 			     << endl;
+	cout << "Fault:\t" 	  << failCounter 	           << "\t(" << failCounter * 100 / testCounter << "%)" << endl;
+	cout << "Success:\t"   << testCounter-failCounter << "\t(" << (testCounter-failCounter) * 100 / testCounter << "%)" << endl;
+}
+
 void test_all_bound()
 {
    cout << "#---------- TEST Upper Bound" << endl;
    test_upper_bound(upper_bound<ivec>);
+   cout << endl;
+   
+   cout << "#---------- TEST Lower Bound" << endl;
+   test_lower_bound(lower_bound<ivec>);
    cout << endl;
 }
 //-----------------------------------------------------------------------------
