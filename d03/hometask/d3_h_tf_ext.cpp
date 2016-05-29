@@ -66,6 +66,26 @@ ostream& operator<<(ostream& o, const ivec& c)
 }
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
+template <typename T>
+class exact_verifier
+{
+public:   
+   typedef T    argument_type;
+   typedef bool result_type;
+   
+   explicit exact_verifier(const argument_type& key)
+   : mKey(key)
+   {}
+   
+   result_type operator() (const argument_type& key) const { return (mKey == key); }
+
+private:
+   const argument_type& mKey;
+};
+
+
+
 
 
 int main (int argc, char** argv)
@@ -82,6 +102,10 @@ int main (int argc, char** argv)
    //cout << ( ( isSorted(ivec({3})) ) ? ("sorted") : ("not sorted") ) << endl;
    
    //cout << ivec({}) << endl;
+   exact_verifier<int> a(7);
+   
+   cout << (a(2) ? "equal" : "unequal") << endl;
+   cout << (a(7) ? "equal" : "unequal") << endl;
    
    return 0;
 }
