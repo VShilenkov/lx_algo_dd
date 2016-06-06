@@ -209,11 +209,14 @@ void merge(Iterator_t aLB, Iterator_t aLE, Iterator_t aRB, Iterator_t aRE, Itera
 }
 
 template <typename Iterator_t>
-void sortMerge(Iterator_t aB, Iterator_t aE)
+void sortMerge(Iterator_t aB, Iterator_t aE, Iterator_t aO)
 {
     if (aB < aE)
     {
-        Iterator_t = aB + (aE - aB) / 2;
+        Iterator_t m = aB + (aE - aB) / 2;
+        sortMerge(aB, m, aO);
+        sortMerge(m, aE, aO);
+        merge(aB, m, m, aE, aO)
     }
     else
     {
