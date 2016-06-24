@@ -7,15 +7,18 @@
 template <typename T>
 void vs::swap(T& aLeft, T& aRight)
 {
-   T tmp  = aLeft;
-   aLeft  = aRight;
-   aRight = tmp;
+   if (aLeft != aRight)
+   {
+      T tmp  = aLeft;
+      aLeft  = aRight;
+      aRight = tmp;
+   }
 }
 
 template <typename T>
 void vs::swap_iterator(T aLeft, T aRight)
 {
-   swap(*aLeft, *aRight);
+   if (aLeft != aRight) swap(*aLeft, *aRight);
 }
 //-----------------------------------------------------------------------------
 

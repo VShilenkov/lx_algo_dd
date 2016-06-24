@@ -21,21 +21,15 @@ typename T::iterator partitionLeft(typename T::iterator aBegin, typename T::iter
    typename T::iterator originalBegin = aBegin;
    vs::swap_iterator(originalBegin, aPivot);           // [originalBegin] [b+1, e)
 
-   // using vs::operator<<;
-
-   // std::cout << container(originalBegin, aEnd) << std::endl;
-
-   typename T::value_type pValue = *aBegin;           // [pivot_value] [unpartitioned)
-
-                                                // [pivot_value]   [partitioned)[unpartitioned)
+   typename T::value_type pivotValue = *aBegin;        // [pivotValue] [unpartitioned)
+                                                // [pivotValue]    [partitioned)[unpartitioned)
    ++aBegin;                                    // [originalBegin] [)           [b, e)
-
-                                                // [pivot_value]   [<pivot_value)       [>pivot_value) [unpartitioned)
+                                                // [pivotValue]    [<pivotValue)       [>pivotValue) [unpartitioned)
    typename T::iterator pivot = aBegin;         // [originalBegin] [originalBegin+1, p) [p, b)         [b, e)
 
    while (aBegin < aEnd)
    {
-      if ((*aBegin) < pValue)
+      if ((*aBegin) < pivotValue)
       {
          vs::swap_iterator(aBegin, pivot);
          ++pivot;
@@ -47,6 +41,28 @@ typename T::iterator partitionLeft(typename T::iterator aBegin, typename T::iter
 
    return pivot;
 }
+
+template <typename T>
+typename T::iterator partitionForvard(typename T::iterator aBegin, typename T::iterator aEnd, typename T::iterator aPivot)
+{
+   assert ((aBegin < aEnd) && "partitionForvard: empty container");
+   std::cout << container(aBegin, aEnd) << " " << *aPivot << std::endl;
+   typename T::value_type pivotValue = *aPivot;
+   typename T::iterator hb = aBegin;
+   typename T::iterator he = aBegin;
+
+   while (aBegin < aEnd)
+   {
+      if (*aBegin < pivotValue)
+      {
+         vs::swap_iterator(hb++, aBegin);
+      }
+      vs::swap_iterator(he++, aBegin++);
+   }
+   std::cout << *hb << std::endl; 
+   return hb;
+}
+
 
 template < typename T
          , typename PivotSelectorFunction
@@ -71,5 +87,11 @@ void quickSort2( typename T::iterator  aBegin
 
 int main()
 {
+   container c({0, 2, 4, 6, 1, 8, 1, 3, 5, 7, 9});
+
+   quickSort2<container>(c.begin(), c.end(), pivotSelector<container>, partitionForvard<container>);
+
+	std::cout << c << std::endl;
+
    return 0;
 }
