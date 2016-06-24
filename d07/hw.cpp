@@ -46,21 +46,27 @@ template <typename T>
 typename T::iterator partitionForvard(typename T::iterator aBegin, typename T::iterator aEnd, typename T::iterator aPivot)
 {
    assert ((aBegin < aEnd) && "partitionForvard: empty container");
-   std::cout << container(aBegin, aEnd) << " " << *aPivot << std::endl;
+
    typename T::value_type pivotValue = *aPivot;
-   typename T::iterator hb = aBegin;
-   typename T::iterator he = aBegin;
+
+   vs::swap_iterator(aBegin, aPivot);
+   aPivot = aBegin++;
 
    while (aBegin < aEnd)
    {
       if (*aBegin < pivotValue)
       {
-         vs::swap_iterator(hb++, aBegin);
+         typename T::iterator nextAfterPivot = aPivot + 1U;
+
+         vs::swap_iterator(aPivot, nextAfterPivot);
+
+         if (nextAfterPivot < aBegin ) { vs::swap_iterator(aPivot, aBegin); }
+         ++aPivot;
       }
-      vs::swap_iterator(he++, aBegin++);
+      ++aBegin;
    }
-   std::cout << *hb << std::endl; 
-   return hb;
+   
+   return aPivot;
 }
 
 
